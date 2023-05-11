@@ -1,4 +1,5 @@
-const createHTTPError = require("http-errors")
+const createHTTPError = require("http-errors");
+const Comment = require("../models/Coment");
 const Task = require("./../models/Task")
 
 //create task
@@ -18,11 +19,17 @@ module.exports.createTask = async (req, res, next ) => {
 //get all tasks
 module.exports.findAllTasks = async  ( req, res, next ) =>{
     try {
-        const task = await Task.find({})
-        if(task.length === 0){
+        // const task = await Task.find({})
+        // const tasks = await Comment.populate(await Comment.find({}),{
+        //     path: 'task'
+        // }) 
+        const tasks = await Task.populate(await Task.find({}),{
+            path: 'comments'
+        })
+        if(tasks.length === 0){
             return next(createHTTPError(404,"Tasks not found"))
         }
-        res.status(200).send({data:task})
+        res.status(200).send({data:tasks})
     } catch (error) {
         next(error)
     }
@@ -32,7 +39,10 @@ module.exports.findAllTasks = async  ( req, res, next ) =>{
 module.exports.findTask = async  ( req, res, next ) =>{
     try {
         const {params:{idTask}} = req
-        const task = await Task.findById(idTask)
+        // const task = await Task.findById(idTask)
+        const task = await Comment.populate(await Comment.find({task: idTask}),{
+            path: 'task'
+        }) 
         if(!task){
             return next(createHTTPError(404,"Task not found"))
         }

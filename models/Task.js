@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const taskSchema = new Schema({
@@ -15,7 +15,14 @@ const taskSchema = new Schema({
     author: {
         name: { type: String , required: true },
         age: { type: Number , min: 14 ,max: 120 }
-    }
+    },
+    comments: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Comment'
+    }]
+}, {
+    timestamps: true,
+    versionKey: false
 })
 
 const Task = mongoose.model('Task', taskSchema);
